@@ -20,7 +20,7 @@ chromeProfilePath = r""
 # continent locations:["Europe", "Asia", "Australia", "NorthAmerica", "SouthAmerica", "Africa", "Australia"]
 location = ["Islamabad"]
 # keywords related with your job search
-keywords = ["react", "node ","javascript", "backend ", "python", "programming", "blockchain"]
+keywords = ["backend", "node ","javascript", "backend ", "python", "programming", "blockchain"]
 #job experience Level - ex:  ["Internship", "Entry level" , "Associate" , "Mid-Senior level" , "Director" , "Executive"]
 experienceLevels = [ "Junior level" ]
 #job posted date - ex: ["Any Time", "Past Month" , "Past Week" , "Past 24 hours"] - select only one
