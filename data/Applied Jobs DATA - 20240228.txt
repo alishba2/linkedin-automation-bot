@@ -1,0 +1,16 @@
+---- Applied Jobs Data ---- created at: 20240228
+---- Number | Job Title | Company | Location | Work Place | Posted Date | Applications | Result 
+
+ Category: mern, Location: Islamabadf_SB2=3, Applying 7 results jobs.
+
+ Category: backend, Location: Islamabadf_SB2=3, Applying 205 results jobs.
+
+ Category: backend, Location: Islamabadf_SB2=3, Applying 131 results jobs.
+
+ Category: backend, Location: Islamabadf_SB2=3, Applying 190 results jobs.
+
+ Category: backend, Location: Islamabadf_SB2=3, Applying 133 results jobs.
+
+ Category: backend, Location: Islamabadf_SB2=3, Applying 133 results jobs.
+
+ Category: backend, Location: Islamabadf_SB2=3, Applying 134 results jobs.

@@ -17,10 +17,10 @@ Including another URLconf
 
 # your_app_name/urls.py
 from django.urls import path
-from .view import apply_to_jobs
-
+from .view import apply_to_jobs , my_view
 urlpatterns = [
-
     path('applyToJobs/', apply_to_jobs, name='apply_to_jobs'),
- 
+    # Add a trailing slash for the view endpoint
+    path('view/', my_view, name='my_view'),
 ]
+
