@@ -8,7 +8,6 @@ import yaml
 import json
 import os
 from django.conf import settings
-from pydevtools import pydevtools  # Import pydevtools
 
 
 import time
@@ -34,20 +33,6 @@ from django.conf import settings
 
 
 
-def get_chrome_session_id():
-    # Connect to the remote debugging server
-    browser = pydevtools.Browser(url="http://127.0.0.1:9222")
-
-    # Get the list of open tabs (each tab has a session ID)
-    tabs = browser.get_tabs()
-
-    # Assume you want the first tab
-    if tabs:
-        first_tab = tabs[0]
-        session_id = first_tab.id
-        return session_id
-    else:
-        return None
 
 
 
@@ -56,6 +41,8 @@ def apply_to_jobs(request):
     
     if request.method == 'POST':
         try:
+            user_email = config.email
+            user_password = config.password
             # Run the LinkedIn automation code directly in the view
             utils.prYellow("🤖 Thanks for using Easy Apply Jobs bot, for more information you can visit our site - www.automated-bots.com")
             utils.prYellow("🌐 Bot will run in Chrome browser and log in Linkedin for you.")
@@ -68,37 +55,48 @@ def apply_to_jobs(request):
 
             # Add arguments
             chrome_options.add_argument('--ignore-certificate-errors')
+            chrome_driver_path = r"C:\Users\4G Traders\Downloads\chromedriver-win64\chromedriver.exe"
+
+            # Use the Service class to set the executable path
+            service = Service(chrome_driver_path)
+
+            # Initialize Chrome WebDriver using the service and options
+            driver = webdriver.Chrome(service=service, options=chrome_options)
 
        
 
-            driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=chrome_options)
+            # driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=chrome_options)
             existing_cookies = driver.get_cookies()
-            
             
             cookies_path = f"{os.path.join(os.getcwd(),'cookies')}/{getHash(config.email)}.pkl"
             driver.get('https://www.linkedin.com')
-            driver.delete_all_cookies()
-            for cookie in existing_cookies:
-                driver.add_cookie(cookie)
+            # driver.delete_all_cookies()
+            # for cookie in existing_cookies:
+            #     driver.add_cookie(cookie)
 
-            loadCookies(driver, cookies_path)
+            # loadCookies(driver, cookies_path)
 
             if not isLoggedIn(driver):
+                # User is not logged in, go to the login page and enter credentials
                 driver.get("https://www.linkedin.com/login?trk=guest_homepage-basic_nav-header-signin")
                 utils.prYellow("🔄 Trying to log in Linkedin...")
                 try:
-                    driver.find_element("id", "username").send_keys(config.email)
+                    driver.find_element("id", "username").send_keys(user_email)
                     time.sleep(2)
-                    driver.find_element("id", "password").send_keys(config.password)
+                    driver.find_element("id", "password").send_keys(user_password)
                     time.sleep(2)
                     driver.find_element("xpath", '//button[@type="submit"]').click()
                     time.sleep(30)
                 except:
                     utils.prRed("❌ Couldn't log in Linkedin by using Chrome. Please check your Linkedin credentials on config files line 7 and 8.")
+                    
+            # Now check if the user is logged in
+            if isLoggedIn(driver):
+                # User is logged in, navigate to the feed or perform other actions
+                linkJobApply(driver)
+            else:
+                return JsonResponse({'status': 'error', 'message': 'Login failed. Please check your credentials.'})
 
-                # saveCookies(driver, cookies_path)
-            # start application
-            linkJobApply(driver)
 
             return JsonResponse({'status': 'success'})
         except Exception as e:
@@ -353,7 +351,6 @@ def applyProcess(driver, percentage, offerPage):
 def answer_additional_questions(driver):
     print("Entered in additional Questions")
     additional_questions = load_additional_questions()
-    resume = "John Doe\nSoftware Developer\nLocation: Anytown, USA\nPhone: (555) 123-4567\nEmail: john.doe@example.com\nSkills: Python 3 years, JavaScript 2 years, Django 1 year, React 1 year\nExperience:\n- Software Developer at ABC Tech (2019-2022)\n  Developed web applications using Django and React.\n- Junior Developer at XYZ Solutions (2017-2019)\n  Worked on backend systems using Python for 2 years.\nEducation:\n- Bachelor of Science in Computer Science, University of Tech (2017)\n  Relevant coursework: Algorithms, Web Development, Database Management\n"
 
 
     try:
@@ -361,56 +358,60 @@ def answer_additional_questions(driver):
         text_input_questions = driver.find_elements(By.CSS_SELECTOR, ".artdeco-text-input--label")
         print("Text input questions", text_input_questions)
         
+
+            # if answer == "default":
+            # # If no predefined answer found, use the default logic
+            
+            #     answer_question(question, 0)
+            # else:
+            #     if isinstance(answer, (int, float)):
+            #         utils.prYellow(answer)
+            #         answer_question(question, answer)
+            #     else:
+            #         # If not a number, send 0 as the answer
+            #         answer_question(question, 0)
         for question in text_input_questions:
             question_text = question.text
-            print("Input questions" ,question_text)
-                # Get an answer using generate_answers
-            questions = [question_text]  # Assuming generate_answers expects a list of questions
+            print("Question ", question_text)
             answer = get_answer(question_text, additional_questions)
-            print("Answer of question is: ", answer)
-            utils.prYellow(answer)
-
             if answer == "default":
-            # If no predefined answer found, use the default logic
-            
+                # If no predefined answer found, use the default logic
                 answer_question(question, 0)
             else:
-    # Check if the answer is a number
-                if isinstance(answer, (int, float)):
-                    utils.prYellow(answer)
-                    answer_question(question, answer)
-                else:
-                    # If not a number, send 0 as the answer
-                    answer_question(question, 0)
-
+                answer_question(question, answer)
                 
                 # Use predefined answer
              
            
+        
+            
+
         # Handle radio button questions
         radio_questions = driver.find_elements(By.CSS_SELECTOR, "[data-test-form-builder-radio-button-form-component]")
         print("Radio button questions", radio_questions)
         for question in radio_questions:
             question_text = question.find_element(By.CSS_SELECTOR, ".fb-dash-form-element__label-title--is-required").text
-            print("Radio Question ", question_text)
+            print("Question ", question_text)
             answer = get_answer(question_text, additional_questions)
             if answer == "default":
+                # If no predefined answer found, use the default logic
                 answer_radio_question(question, "No")
             else:
+                # Use predefined answer
                 answer_radio_question(question, answer)
+
+        # Handle dropdown questions
         dropdown_questions = driver.find_elements(By.CSS_SELECTOR, "[data-test-text-entity-list-form-component]")
         print("Dropdown questions", dropdown_questions)
         for question in dropdown_questions:
             question_text = question.find_element(By.CSS_SELECTOR, ".fb-dash-form-element__label-title--is-required").text
-            print("Dropdown Question ", question_text)
+            print("Question ", question_text)
             answer = get_answer(question_text, additional_questions)
             if answer == "default":
-                
                 # If no predefined answer found, use the default logic
                 answer_dropdown_question(question, 'No')
             else:
                 # Use predefined answer
-                utils.prYellow(answer)
                 answer_dropdown_question(question, answer)
     except Exception as e:
         print(f"Error answering additional questions: {e}")
