@@ -4,7 +4,7 @@
 browser = ["Chrome"]
 # Enter your Linkedin password and username below. Do not commit this file after entering these credentials.
 # Linkedin credentials
-email = "alishbashazadi79@gmail.com"
+email = "alishbashazadi013@gmail.com"
 password = "#21linkdin"
 
 #PRO FEATURE - Optional! run browser in headless mode, no browser screen will be shown it will work in background.
@@ -20,7 +20,7 @@ chromeProfilePath = r""
 # continent locations:["Europe", "Asia", "Australia", "NorthAmerica", "SouthAmerica", "Africa", "Australia"]
 location = ["Islamabad"]
 # keywords related with your job search
-keywords = ["backend", "node ","javascript", "backend ", "python", "programming", "blockchain"]
+keywords = ["web developer", "node ","javascript", "backend ", "python", "programming", "blockchain"]
 #job experience Level - ex:  ["Internship", "Entry level" , "Associate" , "Mid-Senior level" , "Director" , "Executive"]
 experienceLevels = [ "Junior level" ]
 #job posted date - ex: ["Any Time", "Past Month" , "Past Week" , "Past 24 hours"] - select only one

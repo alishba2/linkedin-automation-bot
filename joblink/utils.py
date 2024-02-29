@@ -13,12 +13,16 @@ def chromeBrowserOptions():
     options.add_argument("--disable-extensions")
     options.add_argument('--disable-gpu')
     options.add_argument('--disable-dev-shm-usage')
+    options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
+
+    
     if(config.headless):
         options.add_argument("--headless")
     options.add_argument("--start-maximized")
     options.add_argument("--disable-blink-features")
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_experimental_option('useAutomationExtension', False)
+    
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
     if(len(config.chromeProfilePath)>0):
         initialPath = config.chromeProfilePath[0:config.chromeProfilePath.rfind("/")]

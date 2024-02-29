@@ -8,6 +8,7 @@ import yaml
 import json
 import os
 from django.conf import settings
+from pydevtools import pydevtools  # Import pydevtools
 
 
 import time
@@ -22,6 +23,10 @@ from django.views.decorators.csrf import csrf_exempt
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+
+
 from selenium.webdriver.chrome.service import Service as ChromeService
 from django.conf import settings
 
@@ -29,6 +34,20 @@ from django.conf import settings
 
 
 
+def get_chrome_session_id():
+    # Connect to the remote debugging server
+    browser = pydevtools.Browser(url="http://127.0.0.1:9222")
+
+    # Get the list of open tabs (each tab has a session ID)
+    tabs = browser.get_tabs()
+
+    # Assume you want the first tab
+    if tabs:
+        first_tab = tabs[0]
+        session_id = first_tab.id
+        return session_id
+    else:
+        return None
 
 
 
@@ -40,10 +59,29 @@ def apply_to_jobs(request):
             # Run the LinkedIn automation code directly in the view
             utils.prYellow("🤖 Thanks for using Easy Apply Jobs bot, for more information you can visit our site - www.automated-bots.com")
             utils.prYellow("🌐 Bot will run in Chrome browser and log in Linkedin for you.")
-            driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=utils.chromeBrowserOptions())
+            
+            # Create Options object
+            chrome_options = Options()
+
+            # Add experimental option
+            chrome_options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
+
+            # Add arguments
+            chrome_options.add_argument('--ignore-certificate-errors')
+
+       
+
+            driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=chrome_options)
+            existing_cookies = driver.get_cookies()
+            
+            
             cookies_path = f"{os.path.join(os.getcwd(),'cookies')}/{getHash(config.email)}.pkl"
             driver.get('https://www.linkedin.com')
-            # loadCookies(driver, cookies_path)
+            driver.delete_all_cookies()
+            for cookie in existing_cookies:
+                driver.add_cookie(cookie)
+
+            loadCookies(driver, cookies_path)
 
             if not isLoggedIn(driver):
                 driver.get("https://www.linkedin.com/login?trk=guest_homepage-basic_nav-header-signin")
@@ -159,9 +197,16 @@ def linkJobApply(driver):
 
                     if easyApplybutton is not False:
                         easyApplybutton.click()
-                        time.sleep(random.uniform(1, constants.botSpeed))
-                        # phone_number = driver.find_elements(By.CSS_SELECTOR, ".artdeco-text-input--input")
-                        # phone_number.send_keys("03495752290")
+                        utils.prYellow("button clicked")
+                        phone_numbers = driver.find_elements(By.CSS_SELECTOR, ".artdeco-text-input--input")
+                        if phone_numbers:
+                            print("Phone number found")
+                            # Assuming you want to interact with the first phone number input
+                            phone_number = phone_numbers[0]
+                            # phone_number.clear()
+
+                            # phone_number.send_keys("03495752290")
+                            time.sleep(random.uniform(1, constants.botSpeed))
 
                         try:
                             chooseResume(driver)
@@ -271,9 +316,6 @@ def easyApplyButton(driver):
         time.sleep(random.uniform(1, constants.botSpeed))
         button = driver.find_element(By.XPATH, "//div[contains(@class,'jobs-apply-button--top-card')]//button[contains(@class, 'jobs-apply-button')]")
         EasyApplyButton = button
-      
-
-        
     except:
         EasyApplyButton = False
 
@@ -321,9 +363,10 @@ def answer_additional_questions(driver):
         
         for question in text_input_questions:
             question_text = question.text
+            print("Input questions" ,question_text)
                 # Get an answer using generate_answers
             questions = [question_text]  # Assuming generate_answers expects a list of questions
-            answer = generate_answers(resume, questions)
+            answer = get_answer(question_text, additional_questions)
             print("Answer of question is: ", answer)
             utils.prYellow(answer)
 
@@ -334,6 +377,7 @@ def answer_additional_questions(driver):
             else:
     # Check if the answer is a number
                 if isinstance(answer, (int, float)):
+                    utils.prYellow(answer)
                     answer_question(question, answer)
                 else:
                     # If not a number, send 0 as the answer
@@ -343,35 +387,30 @@ def answer_additional_questions(driver):
                 # Use predefined answer
              
            
-        
-            
-
         # Handle radio button questions
         radio_questions = driver.find_elements(By.CSS_SELECTOR, "[data-test-form-builder-radio-button-form-component]")
         print("Radio button questions", radio_questions)
         for question in radio_questions:
             question_text = question.find_element(By.CSS_SELECTOR, ".fb-dash-form-element__label-title--is-required").text
-            print("Question ", question_text)
+            print("Radio Question ", question_text)
             answer = get_answer(question_text, additional_questions)
             if answer == "default":
-                # If no predefined answer found, use the default logic
                 answer_radio_question(question, "No")
             else:
-                # Use predefined answer
                 answer_radio_question(question, answer)
-
-        # Handle dropdown questions
         dropdown_questions = driver.find_elements(By.CSS_SELECTOR, "[data-test-text-entity-list-form-component]")
         print("Dropdown questions", dropdown_questions)
         for question in dropdown_questions:
             question_text = question.find_element(By.CSS_SELECTOR, ".fb-dash-form-element__label-title--is-required").text
-            print("Question ", question_text)
+            print("Dropdown Question ", question_text)
             answer = get_answer(question_text, additional_questions)
             if answer == "default":
+                
                 # If no predefined answer found, use the default logic
                 answer_dropdown_question(question, 'No')
             else:
                 # Use predefined answer
+                utils.prYellow(answer)
                 answer_dropdown_question(question, answer)
     except Exception as e:
         print(f"Error answering additional questions: {e}")
@@ -412,16 +451,14 @@ def load_additional_questions():
 
 # Define other functions (answer_question, answer_radio_question, answer_dropdown_question, get_answer) accordingly.
 def answer_radio_question(question_element, answer):
-    # Your logic to interact with the radio button and select the answer
-    # This is a placeholder and should be replaced with the actual implementation
+
     radio_buttons = question_element.find_elements(By.CSS_SELECTOR, ".fb-form-element__checkbox")
     for radio_button in radio_buttons:
         if radio_button.get_attribute("value").lower() == answer.lower():
             radio_button.click()
 
 def answer_dropdown_question(question_element, answer):
-    # Your logic to interact with the dropdown and select the answer
-    # This is a placeholder and should be replaced with the actual implementation
+    
     dropdown = question_element.find_element(By.CSS_SELECTOR, "[data-test-text-entity-list-form-select]")
     # Assuming the options have the same text as the keys in your additional_questions
     for option in dropdown.find_elements(By.TAG_NAME, "option"):
@@ -473,7 +510,7 @@ def generate_answers(resume, questions):
     print( questions_string ,"================")
 
     # Combine the resume and questions in the prompt
-    prompt = f"Answer the questions according to the resume in one word. Resume: {resume}\nQuestions: { questions_string }\n If the question is asked about experience only give the number like 0 , 2 etc in number form and if the answer is not found return string 'default'"
+    prompt = f"Answer the questions according to the resume in one word. Resume: {resume}\nQuestions: { questions_string }\n If the question is asked about experience only give the number like 0 , 2 and yes/no for questions etc"
 
     utils.prYellow(prompt)
     chat_completion = client.chat.completions.create(
