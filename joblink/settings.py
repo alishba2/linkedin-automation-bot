@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-&sl!y6!vgj0*pqsij$p50y$+l-04pg9wme00lq_y#35x2k%npr
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["ai-joblink-pro-python.onrender.com","https://joblink-pro-react-js.vercel.app"]
 
 
 # Application definition
