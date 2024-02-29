@@ -74,7 +74,7 @@ WSGI_APPLICATION = 'joblink.wsgi.application'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Add your frontend origin(s) here
     "http://127.0.0.1:3000",
-    "https://ai-joblink-pro-python.onrender",
+    "https://joblink-pro-react-js.vercel.app",
 ]
 CORS_ALLOW_ALL_ORIGINS = True
 
