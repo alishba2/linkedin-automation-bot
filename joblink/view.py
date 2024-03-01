@@ -55,17 +55,17 @@ def apply_to_jobs(request):
 
             # Add arguments
             chrome_options.add_argument('--ignore-certificate-errors')
-            chrome_driver_path = r"C:\Users\4G Traders\Downloads\chromedriver-win64\chromedriver.exe"
+            # chrome_driver_path = r"C:\Users\4G Traders\Downloads\chromedriver-win64\chromedriver.exe"
 
             # Use the Service class to set the executable path
-            service = Service(chrome_driver_path)
+            # service = Service(chrome_driver_path)
 
             # Initialize Chrome WebDriver using the service and options
-            driver = webdriver.Chrome(service=service, options=chrome_options)
+            # driver = webdriver.Chrome(service=service, options=chrome_options)
 
        
 
-            # driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=chrome_options)
+            driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=chrome_options)
             existing_cookies = driver.get_cookies()
             
             cookies_path = f"{os.path.join(os.getcwd(),'cookies')}/{getHash(config.email)}.pkl"
