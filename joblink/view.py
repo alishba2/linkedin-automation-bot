@@ -9,7 +9,7 @@ import json
 import os
 from django.conf import settings
 
-import chromedriver_autoinstaller
+# import chromedriver_autoinstaller
 from selenium.webdriver.support.ui import WebDriverWait
 
 import time
@@ -31,7 +31,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.service import Service as ChromeService
 from django.conf import settings
 
-chromedriver_autoinstaller.install()
+# chromedriver_autoinstaller.install()
 
 
 
