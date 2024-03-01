@@ -10,6 +10,7 @@ import os
 from django.conf import settings
 
 import chromedriver_autoinstaller
+from selenium.webdriver.support.ui import WebDriverWait
 
 import time
 import random
@@ -34,7 +35,7 @@ chromedriver_autoinstaller.install()
 
 
 
-
+desired_version = "4.11"
 
 
 
@@ -51,16 +52,12 @@ def apply_to_jobs(request):
             
             # Create Options object
             chrome_options = Options()
-            chrome_options.add_argument('--headless')  # Run in headless mode (no graphical interface)
-            chrome_options.add_argument('--disable-gpu')  # Disable GPU acceleration in headless mode
-            # Initialize Chrome WebDriver
-            driver = webdriver.Chrome(options=chrome_options)
 
             # Add experimental option
-            # chrome_options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
+            chrome_options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
 
             # Add arguments
-            # chrome_options.add_argument('--ignore-certificate-errors')
+            chrome_options.add_argument('--ignore-certificate-errors')
             # chrome_driver_path = r"C:\Users\4G Traders\Downloads\chromedriver-win64\chromedriver.exe"
 
             # Use the Service class to set the executable path
@@ -68,10 +65,11 @@ def apply_to_jobs(request):
 
             # Initialize Chrome WebDriver using the service and options
             # driver = webdriver.Chrome(service=service, options=chrome_options)
-            # driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()),options=utils.chromeBrowserOptions())
+            driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()),options=utils.chromeBrowserOptions())
 
+   
+            wait = WebDriverWait(driver, 10)
 
-       
 
             # driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=chrome_options)
             # existing_cookies = driver.get_cookies()
