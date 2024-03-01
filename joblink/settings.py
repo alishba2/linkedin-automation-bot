@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-&sl!y6!vgj0*pqsij$p50y$+l-04pg9wme00lq_y#35x2k%npr
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["ai-joblink-pro-python.onrender.com","https://joblink-pro-react-js.vercel.app"]
+ALLOWED_HOSTS = ["ai-joblink-pro-python.onrender.com","joblink-pro-react-js.vercel.app" ,"localhost", "127.0.0.1"]
 
 
 # Application definition
@@ -75,9 +75,13 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Add your frontend origin(s) here
     "http://127.0.0.1:3000",
     "https://joblink-pro-react-js.vercel.app",
+    "https://ai-joblink-pro-python.onrender.com"
 ]
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
 
+
+# ALLOWED_HOSTS = ["ai-joblink-pro-python.onrender.com"]
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
