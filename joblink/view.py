@@ -75,7 +75,12 @@ def apply_to_jobs(request):
             # existing_cookies = driver.get_cookies()
             
             # cookies_path = f"{os.path.join(os.getcwd(),'cookies')}/{getHash(config.email)}.pkl"
-            driver.get('https://www.linkedin.com')
+            try :
+                
+                driver.get('https://www.linkedin.com')
+            except: 
+                return JsonResponse({'status': 'error', 'message': 'url not workind'})
+                
             # driver.delete_all_cookies()
             # for cookie in existing_cookies:
             #     driver.add_cookie(cookie)
