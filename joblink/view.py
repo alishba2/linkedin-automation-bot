@@ -9,6 +9,7 @@ import json
 import os
 from django.conf import settings
 
+import chromedriver_autoinstaller
 
 import time
 import random
@@ -29,6 +30,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.service import Service as ChromeService
 from django.conf import settings
 
+chromedriver_autoinstaller.install()
 
 
 
@@ -49,12 +51,16 @@ def apply_to_jobs(request):
             
             # Create Options object
             chrome_options = Options()
+            chrome_options.add_argument('--headless')  # Run in headless mode (no graphical interface)
+            chrome_options.add_argument('--disable-gpu')  # Disable GPU acceleration in headless mode
+            # Initialize Chrome WebDriver
+            driver = webdriver.Chrome(options=chrome_options)
 
             # Add experimental option
-            chrome_options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
+            # chrome_options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
 
             # Add arguments
-            chrome_options.add_argument('--ignore-certificate-errors')
+            # chrome_options.add_argument('--ignore-certificate-errors')
             # chrome_driver_path = r"C:\Users\4G Traders\Downloads\chromedriver-win64\chromedriver.exe"
 
             # Use the Service class to set the executable path
@@ -62,15 +68,15 @@ def apply_to_jobs(request):
 
             # Initialize Chrome WebDriver using the service and options
             # driver = webdriver.Chrome(service=service, options=chrome_options)
-            driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()),options=utils.chromeBrowserOptions())
+            # driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()),options=utils.chromeBrowserOptions())
 
 
        
 
             # driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=chrome_options)
-            existing_cookies = driver.get_cookies()
+            # existing_cookies = driver.get_cookies()
             
-            cookies_path = f"{os.path.join(os.getcwd(),'cookies')}/{getHash(config.email)}.pkl"
+            # cookies_path = f"{os.path.join(os.getcwd(),'cookies')}/{getHash(config.email)}.pkl"
             driver.get('https://www.linkedin.com')
             # driver.delete_all_cookies()
             # for cookie in existing_cookies:
