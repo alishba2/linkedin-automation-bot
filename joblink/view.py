@@ -181,6 +181,7 @@ def linkJobApply(driver):
                     if len(offer_ids_split) >= 2:
                         # Check if there's at least one element after splitting
                         offer_id = offer_ids_split[-1]
+                        
 
                         # Check if the element contains the text 'Applied'
                         if not element_exists(offer, By.XPATH, ".//*[contains(text(), 'Applied')]"):
