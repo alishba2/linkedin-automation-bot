@@ -19,7 +19,7 @@ def chromeBrowserOptions():
     options.add_argument("--start-maximized")
     options.add_argument("--disable-blink-features")
     options.add_argument("--disable-blink-features=AutomationControlled")
-    # options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
+    options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
 
     if len(config.chromeProfilePath) > 0:
         initialPath = config.chromeProfilePath[0:config.chromeProfilePath.rfind("/")]

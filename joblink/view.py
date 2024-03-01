@@ -58,6 +58,7 @@ def apply_to_jobs(request):
 
             # Add arguments
             chrome_options.add_argument('--ignore-certificate-errors')
+            chrome_options.add_argument("--headless")
             # chrome_driver_path = r"C:\Users\4G Traders\Downloads\chromedriver-win64\chromedriver.exe"
 
             # Use the Service class to set the executable path
