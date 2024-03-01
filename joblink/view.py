@@ -62,10 +62,12 @@ def apply_to_jobs(request):
 
             # Initialize Chrome WebDriver using the service and options
             # driver = webdriver.Chrome(service=service, options=chrome_options)
+            driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()),options=utils.chromeBrowserOptions())
+
 
        
 
-            driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=chrome_options)
+            # driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=chrome_options)
             existing_cookies = driver.get_cookies()
             
             cookies_path = f"{os.path.join(os.getcwd(),'cookies')}/{getHash(config.email)}.pkl"
